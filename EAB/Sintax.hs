@@ -201,7 +201,7 @@ happyReduction_1 (_ `HappyStk`
 	_ `HappyStk`
 	happyRest)
 	 = HappyAbsSyn4
-		 (let happy_var_2 happy_var_4 happy_var_6
+		 (Let happy_var_2 happy_var_4 happy_var_6
 	) `HappyStk` happyRest
 
 happyReduce_2 = happySpecReduce_3  4 happyReduction_2
@@ -209,7 +209,7 @@ happyReduction_2 (HappyAbsSyn4  happy_var_3)
 	_
 	(HappyAbsSyn4  happy_var_1)
 	 =  HappyAbsSyn4
-		 (or happy_var_1 happy_var_3
+		 (Or happy_var_1 happy_var_3
 	)
 happyReduction_2 _ _ _  = notHappyAtAll 
 
@@ -218,7 +218,7 @@ happyReduction_3 (HappyAbsSyn4  happy_var_3)
 	_
 	(HappyAbsSyn4  happy_var_1)
 	 =  HappyAbsSyn4
-		 (and happy_var_1 happy_var_3
+		 (And happy_var_1 happy_var_3
 	)
 happyReduction_3 _ _ _  = notHappyAtAll 
 
@@ -227,7 +227,7 @@ happyReduction_4 (HappyAbsSyn4  happy_var_3)
 	_
 	(HappyAbsSyn4  happy_var_1)
 	 =  HappyAbsSyn4
-		 (plus happy_var_1 happy_var_3
+		 (Plus happy_var_1 happy_var_3
 	)
 happyReduction_4 _ _ _  = notHappyAtAll 
 
@@ -236,7 +236,7 @@ happyReduction_5 (HappyAbsSyn4  happy_var_3)
 	_
 	(HappyAbsSyn4  happy_var_1)
 	 =  HappyAbsSyn4
-		 (times happy_var_1 happy_var_3
+		 (Times happy_var_1 happy_var_3
 	)
 happyReduction_5 _ _ _  = notHappyAtAll 
 
@@ -244,7 +244,7 @@ happyReduce_6 = happySpecReduce_2  4 happyReduction_6
 happyReduction_6 (HappyAbsSyn4  happy_var_2)
 	_
 	 =  HappyAbsSyn4
-		 (not happy_var_2
+		 (Not happy_var_2
 	)
 happyReduction_6 _ _  = notHappyAtAll 
 
@@ -260,27 +260,27 @@ happyReduction_7 _ _ _  = notHappyAtAll
 happyReduce_8 = happySpecReduce_1  4 happyReduction_8
 happyReduction_8 (HappyTerminal (TokenVar happy_var_1))
 	 =  HappyAbsSyn4
-		 (var happy_var_1
+		 (Var happy_var_1
 	)
 happyReduction_8 _  = notHappyAtAll 
 
 happyReduce_9 = happySpecReduce_1  4 happyReduction_9
 happyReduction_9 (HappyTerminal (TokenInt happy_var_1))
 	 =  HappyAbsSyn4
-		 (int happy_var_1
+		 (Num happy_var_1
 	)
 happyReduction_9 _  = notHappyAtAll 
 
 happyReduce_10 = happySpecReduce_1  4 happyReduction_10
 happyReduction_10 _
 	 =  HappyAbsSyn4
-		 (true
+		 (True
 	)
 
 happyReduce_11 = happySpecReduce_1  4 happyReduction_11
 happyReduction_11 _
 	 =  HappyAbsSyn4
-		 (false
+		 (False
 	)
 
 happyNewToken action sts stk [] =
@@ -349,7 +349,7 @@ data EAB = Let String EAB EAB
          | Times EAB EAB
          | Not EAB
          | Var String
-         | Int Int
+         | Num Int
          | True
          | False
          deriving (Show)

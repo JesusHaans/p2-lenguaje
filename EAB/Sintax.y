@@ -29,17 +29,17 @@ module EAB.Sintax where
 %left '*'
 %%
 
-EAB : let var '=' EAB in EAB end    {let $2 $4 $6}
-    | EAB '||' EAB                  {or $1 $3}
-    | EAB '&&' EAB                  {and $1 $3}
-    | EAB '+' EAB                   {plus $1 $3}
-    | EAB '*' EAB                   {times $1 $3}
-    | not EAB                       {not $2}
+EAB : let var '=' EAB in EAB end    {Let $2 $4 $6}
+    | EAB '||' EAB                  {Or $1 $3}
+    | EAB '&&' EAB                  {And $1 $3}
+    | EAB '+' EAB                   {Plus $1 $3}
+    | EAB '*' EAB                   {Times $1 $3}
+    | not EAB                       {Not $2}
     | '(' EAB ')'                   {$2}
-    | var                           {var $1}
-    | int                           {int $1}
-    | true                          {true}
-    | false                         {false}
+    | var                           {Var $1}
+    | int                           {Num $1}
+    | true                          {True}
+    | false                         {False}
 
 
 {
@@ -53,7 +53,7 @@ data EAB = Let String EAB EAB
          | Times EAB EAB
          | Not EAB
          | Var String
-         | Int Int
+         | Num Int
          | True
          | False
          deriving (Show)
