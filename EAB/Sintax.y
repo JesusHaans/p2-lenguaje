@@ -11,7 +11,7 @@ module EAB.Sintax where
     in      { TokenIn }
     end     { TokenEnd }
     var     { TokenVar $$ }
-    int     { TokenInt $$ }
+    num     { TokenNum $$ }
     '='     { TokenAssign }
     '||'    { TokenOr }
     '&&'    { TokenAnd }
@@ -20,8 +20,7 @@ module EAB.Sintax where
     not     { TokenNot }
     '('     { TokenLParen }
     ')'     { TokenRParen }
-    true    { TokenTrue }
-    false   { TokenFalse }
+    bol     { TokenBol $$ }
 
 %right in
 %nonassoc '||' '&&' not
@@ -37,9 +36,8 @@ EAB : let var '=' EAB in EAB end    {Let $2 $4 $6}
     | not EAB                       {Not $2}
     | '(' EAB ')'                   {$2}
     | var                           {Var $1}
-    | int                           {Num $1}
-    | true                          {True}
-    | false                         {False}
+    | num                           {Num $1}
+    | bol                           {Bol $1}
 
 
 {
@@ -54,8 +52,7 @@ data EAB = Let String EAB EAB
          | Not EAB
          | Var String
          | Num Int
-         | True
-         | False
+         | Bol Bool
          deriving (Show)
 
 data Token = TokenLet
@@ -71,8 +68,7 @@ data Token = TokenLet
            | TokenNot
            | TokenLParen
            | TokenRParen
-           | TokenTrue
-           | TokenFalse
+           | TokenBol Bool
            deriving (Show)
 
 lexer :: String -> [Token]
@@ -86,11 +82,8 @@ lexer ('|':'|':cs) = TokenOr : lexer cs
 lexer ('&':'&':cs) = TokenAnd : lexer cs
 lexer ('+':cs) = TokenPlus : lexer cs
 lexer ('*':cs) = TokenTimes : lexer cs
-lexer ('n':'o':'t':cs) = TokenNot : lexer cs
 lexer ('(':cs) = TokenLParen : lexer cs
 lexer (')':cs) = TokenRParen : lexer cs
-lexer ('t':'r':'u':'e':cs) = TokenTrue : lexer cs
-lexer ('f':'a':'l':'s':'e':cs) = TokenFalse : lexer cs
 
 lexInt :: String -> [Token]
 lexInt cs = TokenInt (read n) : lexer rest
@@ -101,6 +94,9 @@ lexVar cs = case span isAlpha cs of
                 ("let", cs') -> TokenLet : lexer cs'
                 ("in", cs') -> TokenIn : lexer cs'
                 ("end", cs') -> TokenEnd : lexer cs'
+                ("not", cs') -> TokenNot : lexer cs'
+                ("true", cs') -> TokenBol True : lexer cs'
+                ("false", cs') -> TokenBol False : lexer cs'
                 (var, cs') -> TokenVar var : lexer cs'
 
 }
