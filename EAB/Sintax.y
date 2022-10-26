@@ -1,5 +1,7 @@
 {
 module EAB.Sintax where
+import Data.Char
+import Data.List
 }
 
 %name parser
@@ -10,27 +12,28 @@ module EAB.Sintax where
     let     { TokenLet }
     in      { TokenIn }
     end     { TokenEnd }
-    var     { TokenVar $$ }
-    num     { TokenNum $$ }
     '='     { TokenAssign }
-    '||'    { TokenOr }
-    '&&'    { TokenAnd }
+    or    { TokenOr }
+    and    { TokenAnd }
     '+'     { TokenPlus }
     '*'     { TokenTimes }
     not     { TokenNot }
     '('     { TokenLParen }
     ')'     { TokenRParen }
+    var     { TokenVar $$ }
+    num     { TokenNum $$ }
     bol     { TokenBol $$ }
 
 %right in
-%nonassoc '||' '&&' not
+%left or and 
+%right not
 %left '+'
 %left '*'
 %%
 
 EAB : let var '=' EAB in EAB end    {Let $2 $4 $6}
-    | EAB '||' EAB                  {Or $1 $3}
-    | EAB '&&' EAB                  {And $1 $3}
+    | EAB or EAB                  {Or $1 $3}
+    | EAB and EAB                  {And $1 $3}
     | EAB '+' EAB                   {Plus $1 $3}
     | EAB '*' EAB                   {Times $1 $3}
     | not EAB                       {Not $2}
@@ -53,13 +56,13 @@ data EAB = Let String EAB EAB
          | Var String
          | Num Int
          | Bol Bool
-         deriving (Show)
+         deriving (Show , Eq)
 
 data Token = TokenLet
            | TokenIn
            | TokenEnd
            | TokenVar String
-           | TokenInt Int
+           | TokenNum Int
            | TokenAssign
            | TokenOr
            | TokenAnd
@@ -78,15 +81,13 @@ lexer (c:cs)
         | isAlpha c = lexVar (c:cs)
         | isDigit c = lexInt (c:cs)
 lexer ('=':cs) = TokenAssign : lexer cs
-lexer ('|':'|':cs) = TokenOr : lexer cs
-lexer ('&':'&':cs) = TokenAnd : lexer cs
 lexer ('+':cs) = TokenPlus : lexer cs
 lexer ('*':cs) = TokenTimes : lexer cs
 lexer ('(':cs) = TokenLParen : lexer cs
 lexer (')':cs) = TokenRParen : lexer cs
 
 lexInt :: String -> [Token]
-lexInt cs = TokenInt (read n) : lexer rest
+lexInt cs = TokenNum (read n) : lexer rest
     where (n, rest) = span isDigit cs
 
 lexVar :: String -> [Token]
@@ -97,6 +98,8 @@ lexVar cs = case span isAlpha cs of
                 ("not", cs') -> TokenNot : lexer cs'
                 ("true", cs') -> TokenBol True : lexer cs'
                 ("false", cs') -> TokenBol False : lexer cs'
+                ("or", cs') -> TokenOr : lexer cs'
+                ("and", cs') -> TokenAnd : lexer cs'
                 (var, cs') -> TokenVar var : lexer cs'
 
 }
